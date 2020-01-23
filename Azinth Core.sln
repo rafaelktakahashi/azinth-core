@@ -1,0 +1,51 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29709.97
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Azinth Core", "Azinth Core\Azinth Core.vcxproj", "{3914E633-B9AA-4951-9193-74BE536FBBEB}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Remapper", "Remapper\Remapper.vcxproj", "{523A0808-401A-4C85-95F4-F9B78E960E3D}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "KeyboardHookDLL", "KeyboardHookDLL\KeyboardHookDLL.vcxproj", "{DAF92C87-F7BF-438E-811A-A9323CDB04EC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3914E633-B9AA-4951-9193-74BE536FBBEB}.Debug|x64.ActiveCfg = Debug|x64
+		{3914E633-B9AA-4951-9193-74BE536FBBEB}.Debug|x64.Build.0 = Debug|x64
+		{3914E633-B9AA-4951-9193-74BE536FBBEB}.Debug|x86.ActiveCfg = Debug|Win32
+		{3914E633-B9AA-4951-9193-74BE536FBBEB}.Debug|x86.Build.0 = Debug|Win32
+		{3914E633-B9AA-4951-9193-74BE536FBBEB}.Release|x64.ActiveCfg = Release|x64
+		{3914E633-B9AA-4951-9193-74BE536FBBEB}.Release|x64.Build.0 = Release|x64
+		{3914E633-B9AA-4951-9193-74BE536FBBEB}.Release|x86.ActiveCfg = Release|Win32
+		{3914E633-B9AA-4951-9193-74BE536FBBEB}.Release|x86.Build.0 = Release|Win32
+		{523A0808-401A-4C85-95F4-F9B78E960E3D}.Debug|x64.ActiveCfg = Debug|x64
+		{523A0808-401A-4C85-95F4-F9B78E960E3D}.Debug|x64.Build.0 = Debug|x64
+		{523A0808-401A-4C85-95F4-F9B78E960E3D}.Debug|x86.ActiveCfg = Debug|Win32
+		{523A0808-401A-4C85-95F4-F9B78E960E3D}.Debug|x86.Build.0 = Debug|Win32
+		{523A0808-401A-4C85-95F4-F9B78E960E3D}.Release|x64.ActiveCfg = Release|x64
+		{523A0808-401A-4C85-95F4-F9B78E960E3D}.Release|x64.Build.0 = Release|x64
+		{523A0808-401A-4C85-95F4-F9B78E960E3D}.Release|x86.ActiveCfg = Release|Win32
+		{523A0808-401A-4C85-95F4-F9B78E960E3D}.Release|x86.Build.0 = Release|Win32
+		{DAF92C87-F7BF-438E-811A-A9323CDB04EC}.Debug|x64.ActiveCfg = Debug|x64
+		{DAF92C87-F7BF-438E-811A-A9323CDB04EC}.Debug|x64.Build.0 = Debug|x64
+		{DAF92C87-F7BF-438E-811A-A9323CDB04EC}.Debug|x86.ActiveCfg = Debug|Win32
+		{DAF92C87-F7BF-438E-811A-A9323CDB04EC}.Debug|x86.Build.0 = Debug|Win32
+		{DAF92C87-F7BF-438E-811A-A9323CDB04EC}.Release|x64.ActiveCfg = Release|x64
+		{DAF92C87-F7BF-438E-811A-A9323CDB04EC}.Release|x64.Build.0 = Release|x64
+		{DAF92C87-F7BF-438E-811A-A9323CDB04EC}.Release|x86.ActiveCfg = Release|Win32
+		{DAF92C87-F7BF-438E-811A-A9323CDB04EC}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CC9769C8-1D9C-43E5-AF5F-29B588DC0947}
+	EndGlobalSection
+EndGlobal
