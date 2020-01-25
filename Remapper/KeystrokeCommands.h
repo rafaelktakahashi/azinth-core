@@ -56,8 +56,8 @@ namespace Azinth
 
 	public:
 
-		// STL constructor
-		MacroCommand(std::vector<unsigned short>* const keypresses, bool triggerOnRepeat);
+		// STL constructor for convenience
+		MacroCommand(std::vector<unsigned short>& const keypresses, bool triggerOnRepeat);
 
 		// unsigned short * keypressSequence - array of 16-bit values, each containing the virtual key code to be
 		//		sent (1 byte value), and also the high bit (most significant) set in case of a keyup. Every keypress
@@ -171,8 +171,9 @@ namespace Azinth
 
 
 		// STL constructor
-		DeadKeyCommand(const std::vector<unsigned int>& independentCodepoints,
-			const std::unordered_map<UnicodeCommand*, UnicodeCommand*>& replacements);
+		DeadKeyCommand(std::vector<unsigned int>& independentCodepoints,
+			std::unordered_map<UnicodeCommand*, UnicodeCommand*>& replacements,
+			bool triggerOnRepeat);
 
 		// UINT* independentCodepoints - the Unicode character for this dead key
 		//								Array may be deleted after passing
@@ -185,7 +186,7 @@ namespace Azinth
 		// UINT replacements_count - number of items in the previous arrays
 		DeadKeyCommand(UINT* const independentCodepoints, UINT const independentCodepointsCount,
 			UnicodeCommand** const replacements_from, UnicodeCommand** const replacements_to,
-			UINT const replacements_count);
+			UINT const replacements_count, bool triggerOnRepeat);
 
 
 

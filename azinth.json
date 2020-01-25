@@ -1,0 +1,107 @@
+{
+  "layoutName": "Azinth Test Layout",
+  "keyboards": [
+    {
+      "name": "\\\\?\\HID#VID_04D9&PID_A0F8&MI_00#8&84b8ce3&0&0000#{884b96c3-56ef-11d1-bc8c-00a0c91405dd}",
+      "alias": "Example",
+      "physicalLayout": "ANSI",
+      "logicalLayout": "US",
+      "modifiers": [
+        {
+          "name": "Shift",
+          "scancodes": ["2A", "36"]
+        }
+      ],
+      "layers": [
+        {
+          "alias": "Unshifted",
+          "modifiers": [],
+          "remaps": [
+            {
+              "type": "unicode",
+              "scancode": "02",
+              "triggerOnRepeat": true,
+              "codepoints": [8704]
+            },
+            {
+              "type": "unicode",
+              "scancode": "03",
+              "triggerOnRepeat": true,
+              "codepoints": [128578]
+            },
+            {
+              "type": "macro",
+              "scancode": "04",
+              "triggerOnRepeat": false,
+              "keypresses": [
+                {
+                  "type": "make",
+                  "vKey": 162
+                },
+                {
+                  "type": "make",
+                  "vKey": 70
+                },
+                {
+                  "type": "break",
+                  "vKey": 162
+                },
+                {
+                  "type": "break",
+                  "vKey": 70
+                }
+              ]
+            },
+            {
+              "type": "unicode",
+              "scancode": "05",
+              "triggerOnRepeat": true,
+              "codepoints": [72, 105, 46, 128578]
+            },
+            {
+              "type": "executable",
+              "scancode": "06",
+              "path": "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe"
+            },
+            {
+              "type": "deadkey",
+              "scancode": "07",
+              "triggerOnRepeat": true,
+              "codepoints": [32],
+              "replacements": [
+                {
+                  "from": [72, 105, 46, 128578],
+                  "to": [72, 105, 46, 128516]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "Alias": "Shifted",
+          "modifiers": ["Shift"],
+          "remaps": [
+            {
+              "type": "unicode",
+              "scancode": "02",
+              "triggerOnRepeat": true,
+              "codepoints": [8705]
+            },
+            {
+              "type": "unicode",
+              "scancode": "03",
+              "triggerOnRepeat": true,
+              "codepoints": [8707]
+            },
+            {
+              "type": "executable",
+              "scancode": "07",
+              "path": "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
+              "arguments": "http://stackoverflow.com/"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

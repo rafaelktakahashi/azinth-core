@@ -8,6 +8,9 @@
 #include "Scancodes.h"
 
 #define MAX_LOADSTRING 100
+#if _DEBUG
+#define DEBUG_TEXT_SIZE	128
+#endif
 
 // Global Variables:
 HINSTANCE hInst;                                // current instance
@@ -41,7 +44,7 @@ INPUT* input;
 Azinth::PRemapper remapper; // PRemapper is a pointer
 
 // Text to display on screen for debugging
-#if DEBUG
+#if _DEBUG
 WCHAR* debugText = new WCHAR[128];
 WCHAR* debugTextKeyboardName = new WCHAR[128];
 WCHAR* debugTextBeingBlocked = new WCHAR[128];
@@ -91,14 +94,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     if (szArgList == NULL)
     {
-#if DEBUG
+#if _DEBUG
         OutputDebugString(L"No arguments received.");
 #endif
         remapper->loadSettings(L"Placeholder");
     }
     else if (argCount != 2)
     {
-#if DEBUG
+#if _DEBUG
         OutputDebugString(L"Incorrect number of arguments. Initializing with default file");
 #endif
         remapper->loadSettings(L"Placeholder");
@@ -108,7 +111,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         // Try to initialize the remapper
         if (!remapper->loadSettings(std::wstring(szArgList[1])))
         {
-#if DEBUG
+#if _DEBUG
             OutputDebugString(L"Failed to open file. Initializing with default file.");
 #endif
             remapper->loadSettings(L"Placeholder");
@@ -258,7 +261,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             rawKeyboardBufferSize = bufferSize;
             delete[] rawKeyboardBuffer;
             rawKeyboardBuffer = new BYTE[rawKeyboardBufferSize];
-#if DEBUG
+#if _DEBUG
             OutputDebugString(L"Needed more space for keyboard buffer");
 #endif
         }
@@ -269,7 +272,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         // Cast the contents of the buffer into our rawinput buffer
         raw = (RAWINPUT*)rawKeyboardBuffer;
 
-#if DEBUG
+#if _DEBUG
         WCHAR* text = new WCHAR[128];
         swprintf_s(text, 128, L"Raw Input: Virtual key %X scancode %s%s%X (%s)\n",
             raw->data.keyboard.VKey,		// virtual keycode
@@ -290,7 +293,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             keyboardNameBufferSize = bufferSize;
             delete[] keyboardNameBuffer;
             keyboardNameBuffer = new WCHAR[keyboardNameBufferSize];
-#if DEBUG
+#if _DEBUG
             OutputDebugString(L"Needed more space for device name buffer");
 #endif
         }
@@ -340,7 +343,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         // There is a copy of this on the delayed message loop.
         /*---End of fix for Fake shift----*/
 
-#if DEBUG
+#if _DEBUG
         memcpy_s(debugTextKeyboardName, DEBUG_TEXT_SIZE, keyboardNameBuffer, keyboardNameBufferSize);
         text = new WCHAR[200];
         swprintf_s(text, 200, L"Raw Input: Keyboard name is %ls\n", keyboardNameBuffer);
@@ -356,8 +359,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         Azinth::PKeystrokeCommand possibleAction = nullptr; // we don't know yet if our key maps to anything
         BOOL doBlock = remapper->evaluateKey(&(raw->data.keyboard), keyboardNameBuffer, &possibleAction);
 
-#if DEBUG
-        if (DoBlock)
+#if _DEBUG
+        if (doBlock)
             OutputDebugString(L"Raw Input: This key should be blocked. Recording it in the decision record.\n");
         else
             OutputDebugString(L"Raw Input: This key should not be blocked, and will not be recorded.\n");
@@ -372,7 +375,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         // sent with the Alt modifier.
         if ((raw->data.keyboard.MakeCode == SCANCODE_ALT && doBlock))
         {
-#if DEBUG
+#if _DEBUG
             OutputDebugString(L"Raw Input: Got a blocked Alt; resetting keyboard state.\n");
 #endif
             if (raw->data.keyboard.Flags & RI_KEY_E0)	// <- if it's RAlt
@@ -417,7 +420,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 
 
-#if DEBUG
+#if _DEBUG
 		WCHAR text[128];
 		swprintf_s(text, 128, L"Hook: vKey=%X keydown=%d sc=%x extend=%d Alt=%d raw lParam=%x\n",
 			virtualKeyCode, keyPressed, extractedScancode, isExtended, isAltKeyDown, lParam);
@@ -444,7 +447,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			// Is pause/break
 			extractedScancode = 0x1d;		// Will wait for (virtual key = 0x13, scancode = 1d) instead.
 											// That's why we don't declare everything const. Things change here.
-#if DEBUG
+#if _DEBUG
 			OutputDebugString(L"Hook: Received a Pause/Break, will look for raw vkey13 sc=1d\n");
 #endif
 		}
@@ -468,7 +471,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			LPARAM mockLParam = lParam;
 			mockLParam &= 0x7fffffff;		// set thirty-first bit to 0 (flag for keypress up)
 
-#if DEBUG
+#if _DEBUG
 			OutputDebugString(L"Hook: Up PrintScreen received, will send fake keypress down to self\n");
 #endif
 
@@ -476,7 +479,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			SendMessage(mainHwnd, WM_HOOK, wParam, mockLParam);
 			// Output value goes nowhere, because there is no real key to be blocked
 		}
-#if DEBUG
+#if _DEBUG
 		else if (virtualKeyCode == VK_SNAPSHOT
 			&& ((extractedScancode == 0x37
 				&& isExtended == 1)
@@ -508,7 +511,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					// Keys in two different keyboards corresponding to the same virtual key may be pressed in rapid succession
 					// We have to assume that people don't do that normally.
 
-#if DEBUG
+#if _DEBUG
 					if (iterator->decision) OutputDebugString(L"Hook: Must block this key.\n");
 					else if (iterator->decision == FALSE) OutputDebugString(L"Hook: Must let this key through.\n");
 #endif
@@ -518,7 +521,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					if (iterator->decision) {
 
 						if (!iterator->mappedAction->execute(!keyPressed, previousStateFlagWasDown && keyPressed)) {
-#if DEBUG
+#if _DEBUG
 							OutputDebugString(L"Simulation failed!!\n");
 #endif
 						}
@@ -566,7 +569,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				if ((currentTime < startTime ? ULONG_MAX - startTime + currentTime : currentTime - startTime) > maxWaitingTime)
 				{
 					// Ignore the Hook message if it exceeded the limit
-#if DEBUG
+#if _DEBUG
 					WCHAR text[128];
 					swprintf_s(text, 128, L"Hook timed out: %X (%d)\n", virtualKeyCode, keyPressed);
 					OutputDebugString(text);
@@ -590,7 +593,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				rawKeyboardBufferSize = bufferSize;
 				delete[] rawKeyboardBuffer;
 				rawKeyboardBuffer = new BYTE[rawKeyboardBufferSize];
-#if DEBUG
+#if _DEBUG
 				OutputDebugString(L"Needed more space for the delayed raw input message.");
 #endif
 			}
@@ -602,7 +605,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 
 																// A lot of code here is similar to that in the WM_INPUT case.
-#if DEBUG
+#if _DEBUG
 			WCHAR text[128];		// <- unnecessary allocation, but this is just for debug
 			swprintf_s(text, 128, L"(delayed) Raw Input: virtual key %X scancode %s%s%X (%s)\n",
 				raw->data.keyboard.VKey,		// virtual keycode
@@ -622,7 +625,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				keyboardNameBufferSize = bufferSize;
 				delete[] keyboardNameBuffer;
 				keyboardNameBuffer = new WCHAR[keyboardNameBufferSize];
-#if DEBUG
+#if _DEBUG
 				OutputDebugString(L"Needed more space for keyboard name in the delayed raw input message");
 #endif
 			}
@@ -723,7 +726,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				if (blockThisHook) {
 
 					if (!possibleOutput->execute(!keyPressed, previousStateFlagWasDown && keyPressed)) {
-#if DEBUG
+#if _DEBUG
 						OutputDebugString(L"WndProc: Command failed!!\n");
 #endif
 					}
@@ -732,7 +735,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		}
 
-#if DEBUG
+#if _DEBUG
 		if (blockThisHook)
 		{
 			WCHAR text[128];

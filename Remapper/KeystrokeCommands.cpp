@@ -57,18 +57,21 @@ namespace Azinth
 	MacroCommand
 	*/
 
-	MacroCommand::MacroCommand(std::vector<unsigned short>* const keypresses, bool triggerOnRepeat)
-	{
-		MacroCommand(keypresses->data(), keypresses->size(), triggerOnRepeat);
-	}
+	MacroCommand::MacroCommand(std::vector<unsigned short>& const keypresses, bool triggerOnRepeat)
+		: MacroCommand(keypresses.data(), keypresses.size(), triggerOnRepeat)
+	{ }
 
-	MacroCommand::MacroCommand(const unsigned short* const keypressSequence, const size_t _inputCount, const bool _triggerOnRepeat)
-		: BaseKeystrokeCommand(), inputCount(_inputCount), triggerOnRepeat(_triggerOnRepeat)
+	MacroCommand::MacroCommand(
+		const unsigned short* const keypressSequence,
+		const size_t _inputCount,
+		const bool _triggerOnRepeat)
+		: BaseKeystrokeCommand(),
+		keystrokes(new INPUT[_inputCount]),
+		inputCount(_inputCount),
+		triggerOnRepeat(_triggerOnRepeat)
 	{
 		if (keypressSequence == nullptr)
 			return;
-
-		keystrokes = new INPUT[_inputCount];
 
 		bool keyup = 0;
 		USHORT virtualKeyCode = 0;
@@ -109,45 +112,14 @@ namespace Azinth
 	*/
 
 	UnicodeCommand::UnicodeCommand(const std::vector<unsigned int>& codepoints, const bool triggerOnRepeat)
-	{
-		inputCount = codepoints.size();
-		for (size_t i = 0; i < codepoints.size(); i++)
-		{
-			if (codepoints[i] > 0xffff)
-				inputCount++;		// <- correct the amount of inputs
-		}
-		keystrokes = new INPUT[inputCount];
-
-		// Keep track of index inside the INPUT array:
-		size_t currentIndex = 0;
-		// Loop must use the amount of codepoints in vector, not the corrected amount of inputs:
-		for (size_t i = 0; i < codepoints.size(); i++)
-		{
-			if (codepoints[i] <= 0xffff)
-			{
-				// one UTF-16 code value, one simulated keypress
-				keystrokes[currentIndex] = INPUT(unicodePrototype);
-				keystrokes[currentIndex].ki.wScan = codepoints[i];
-				currentIndex++;
-				continue;
-			}
-			else
-			{
-				// one UTF-16 surrogate pair, two simulated keypresses
-				uint16_t highSurrogate = 0xd800 + ((codepoints[i] - 0x10000) >> 10);
-				uint16_t lowSurrogate = 0xdc00 + (codepoints[i] & 0x3ff);
-				keystrokes[currentIndex] = INPUT(unicodePrototype);
-				keystrokes[currentIndex + 1] = INPUT(unicodePrototype);
-				keystrokes[currentIndex].ki.wScan = highSurrogate;
-				keystrokes[currentIndex + 1].ki.wScan = lowSurrogate;
-				currentIndex += 2;
-				continue;
-			}
-		}
-	}
+		: UnicodeCommand(codepoints.data(), (UINT)codepoints.size(), triggerOnRepeat)
+	{ }
 
 	UnicodeCommand::UnicodeCommand(const UINT* const codepoints, const UINT _inputCount, const bool _triggerOnRepeat)
-		: BaseKeystrokeCommand(), inputCount(_inputCount), triggerOnRepeat(_triggerOnRepeat)
+		: BaseKeystrokeCommand(),
+		keystrokes(nullptr), // will be properly initialized in constructor's body
+		inputCount(_inputCount),
+		triggerOnRepeat(_triggerOnRepeat)
 	{
 		if (codepoints == nullptr) return;
 
@@ -175,8 +147,8 @@ namespace Azinth
 				uint16_t highSurrogate = 0xd800 + ((codepoints[i] - 0x10000) >> 10);
 				uint16_t lowSurrogate = 0xdc00 + (codepoints[i] & 0x3ff);
 				keystrokes[currentIndex] = INPUT(unicodePrototype);
-				keystrokes[currentIndex + 1] = INPUT(unicodePrototype);
 				keystrokes[currentIndex].ki.wScan = highSurrogate;
+				keystrokes[currentIndex + 1] = INPUT(unicodePrototype);
 				keystrokes[currentIndex + 1].ki.wScan = lowSurrogate;
 				currentIndex += 2;
 				continue;
@@ -300,17 +272,20 @@ namespace Azinth
 		}
 	}
 
-	DeadKeyCommand::
-		DeadKeyCommand(const std::vector<unsigned int>& independentCodepoints,
-			const std::unordered_map<UnicodeCommand*, UnicodeCommand*>& replacements)
-		: UnicodeCommand(independentCodepoints, true),
-		replacements(replacements) { }
+	DeadKeyCommand::DeadKeyCommand(
+		std::vector<unsigned int>& independentCodepoints,
+		std::unordered_map<UnicodeCommand*, UnicodeCommand*>& replacements,
+		bool triggerOnRepeat)
+		: UnicodeCommand(independentCodepoints.data(), independentCodepoints.size(), triggerOnRepeat),
+		replacements(replacements),
+		_nextCommand(nullptr),
+		_nextCommandType(0)
+	{ }
 
-	DeadKeyCommand::
-		DeadKeyCommand(UINT* const independentCodepoints, UINT const independentCodepointsCount,
+	DeadKeyCommand::DeadKeyCommand(UINT* const independentCodepoints, UINT const independentCodepointsCount,
 			UnicodeCommand** const replacements_from, UnicodeCommand** const replacements_to,
-			UINT const replacements_count)
-		: UnicodeCommand(independentCodepoints, independentCodepointsCount, true),
+			UINT const replacements_count, bool triggerOnRepeat)
+		: UnicodeCommand(independentCodepoints, independentCodepointsCount, triggerOnRepeat),
 		_nextCommand(nullptr), _nextCommandType(0)
 	{
 		for (unsigned int i = 0; i < replacements_count; i++) {
@@ -364,7 +339,6 @@ namespace Azinth
 
 	DeadKeyCommand::~DeadKeyCommand()
 	{
-		// is it necessary? --> delete _nextCommand;
 		for (auto iterator = replacements.begin(); iterator != replacements.end(); iterator++)
 		{
 			delete iterator->first;
